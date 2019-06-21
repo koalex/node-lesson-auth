@@ -18,20 +18,18 @@ router.get('/', passport.authenticate('jwt', {
     ctx.body = fs.createReadStream(path.join(__dirname, '../../static/home.html'));
 });
 
-router.get('/signin', auth.signinGet);
+router.get('/signin', auth.renderSigninPage);
+router.get('/signup', auth.renderSignupPage);
 
-apiRouter.post('/signin', auth.signinPost);
+apiRouter.post('/signin', auth.signin);
+apiRouter.post('/signup', auth.signup);
+apiRouter.post('/signout', passport.authenticate('jwt', {session: false}), auth.signout);
 
-router.get('/signup', auth.signupGet);
-
-
-apiRouter.post('/signup', auth.signupPost);
 
 apiRouter.get('/user-activation', async ctx => {
 
 });
 
-apiRouter.post('/signout', passport.authenticate('jwt', {session: false}), auth.signoutPost);
 
 router.get('/me', passport.authenticate('jwt', {session: false}), async ctx => {
     ctx.type = 'json';

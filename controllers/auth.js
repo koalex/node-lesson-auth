@@ -1,22 +1,23 @@
-const fs        = require('fs');
-const passport  = require('../middlewares/passport');
-const path      = require('path')
-
+const fs         = require('fs');
+const path       = require('path');
+const passport   = require('../middlewares/passport');
 const User       = require('users/models/user');
 const BlackToken = require('../models/blacktoken');
-
 const genTokens  = require('./generateTokens');
 const uuidv1     = require('uuid/v1');
 const nodemailer = require('../../../lib/nodemailer');
 
-
-exports.signinGet = async ctx => {
+exports.renderSigninPage = async ctx => {
     ctx.type = 'html';
     ctx.body = fs.createReadStream(path.join(__dirname, '../../../static/signin.html'));
 };
 
+exports.renderSignupPage = async ctx => {
+    ctx.type = 'html';
+    ctx.body = fs.createReadStream(path.join(__dirname, '../../../static/signup.html'));
+};
 
-exports.signinPost = async ctx => {
+exports.signin = async ctx => {
     await passport.authenticate('local', async (err, user, info, status) => {
         if (err) {
             return ctx.throw(err);
@@ -29,11 +30,12 @@ exports.signinPost = async ctx => {
         const tokens = genTokens(user);
 
         ctx.cookies.set('x-access-token', tokens.access_token, {
-            expires: new Date(Date.now() + 5 * 60 * 1000), // время жизни токена
+            // expires: new Date(Date.now() + 5 * 60 * 1000), // время жизни токена (для access_token-а не выставляем)
             secure: ctx.secure,
             httpOnly: true,
             signed: true,
-            origin: (new URL(ctx.href)).origin
+            origin: (new URL(ctx.href)).origin,
+            sameSite: 'strict'
         });
 
         ctx.cookies.set('x-refresh-token', tokens.refresh_token, {
@@ -41,7 +43,8 @@ exports.signinPost = async ctx => {
             secure: ctx.secure,
             httpOnly: true,
             signed: true,
-            origin: (new URL(ctx.href)).origin
+            origin: (new URL(ctx.href)).origin,
+            sameSite: 'strict'
         });
 
         // ctx.type = 'json';
@@ -51,12 +54,7 @@ exports.signinPost = async ctx => {
     })(ctx);
 };
 
-exports.signupGet = async ctx => {
-    ctx.type = 'html';
-    ctx.body = fs.createReadStream(path.join(__dirname, '../../../static/signup.html'));
-};
-
-exports.signupPost = async ctx => {
+exports.signup = async ctx => {
     const user = new User(ctx.request.body);
 
     user.activation_token = uuidv1();
@@ -70,12 +68,26 @@ exports.signupPost = async ctx => {
             html: `<a href="http://localhost:3000/api/v1/user-activation?activationToken=${user.activation_token}">ПОДТВЕРДИТЕ РЕГИСТРАЦИЮ</a>`
         }, (err, info) => {
             if (err) return reject(err);
-
             resove(info);
         });
     });
 
     await user.save();
+
+    ctx.redirect('/signin');
+};
+
+exports.signout = async ctx => {
+    const access_token  = ctx.headers['x-access-token']  || ctx.query.access_token  || ctx.cookies.get('x-access-token');
+    const refresh_token = ctx.headers['x-refresh-token'] || ctx.query.refresh_token || ctx.cookies.get('x-refresh-token');
+
+    const blackAccessToken  = new BlackToken({token: access_token});
+    const blackRefreshToken = new BlackToken({token: refresh_token});
+
+    await Promise.all([blackAccessToken.save(), blackRefreshToken.save()]);
+
+    ctx.cookies.set('x-access-token', null);
+    ctx.cookies.set('x-refresh-token', null);
 
     ctx.redirect('/signin');
 };
@@ -101,30 +113,3 @@ exports.userActivationGet = async ctx => {
         ctx.throw(400, 'токен не найден');
     }
 };
-
-
-exports.signoutPost = async ctx => {
-    const access_token  = ctx.headers['x-access-token'] || ctx.query.access_token || ctx.cookies.get('x-access-token');
-    const refresh_token = ctx.headers['x-refresh-token'] || ctx.query.refresh_token || ctx.cookies.get('x-refresh-token');
-
-    const blackAccessToken = new BlackToken({token: access_token});
-    const blackRefreshToken = new BlackToken({token: refresh_token});
-
-    await Promise.all([blackAccessToken.save(), blackRefreshToken.save()]);
-
-    ctx.cookies.set('x-access-token', null);
-    ctx.cookies.set('x-refresh-token', null);
-
-    ctx.redirect('/signin');
-};
-
-
-
-
-
-
-
-
-
-
-
