@@ -1,6 +1,6 @@
 const fs         = require('fs');
 const path       = require('path');
-const passport   = require('server/middlewares/passport');
+const passport   = require('../middlewares/passport');
 const User       = require('users/models/user');
 const BlackToken = require('../models/blacktoken');
 const genTokens  = require('./generateTokens');
