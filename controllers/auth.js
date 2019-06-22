@@ -1,20 +1,20 @@
 const fs         = require('fs');
 const path       = require('path');
-const passport   = require('../middlewares/passport');
+const passport   = require('server/middlewares/passport');
 const User       = require('users/models/user');
 const BlackToken = require('../models/blacktoken');
 const genTokens  = require('./generateTokens');
 const uuidv1     = require('uuid/v1');
-const nodemailer = require('../../../lib/nodemailer');
+const nodemailer = require('server/lib/nodemailer');
 
 exports.renderSigninPage = async ctx => {
     ctx.type = 'html';
-    ctx.body = fs.createReadStream(path.join(__dirname, '../../../static/signin.html'));
+    ctx.body = fs.createReadStream(require.resolve('server/static/signin.html'));
 };
 
 exports.renderSignupPage = async ctx => {
     ctx.type = 'html';
-    ctx.body = fs.createReadStream(path.join(__dirname, '../../../static/signup.html'));
+    ctx.body = fs.createReadStream(require.resolve('server/static/signup.html'));
 };
 
 exports.signin = async ctx => {
