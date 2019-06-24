@@ -21,14 +21,14 @@ module.exports = new JwtStrategy(opts, async (req, jwt_payload, done) => {
     const access_token  = req.headers['x-access-token'] || req.query.access_token || req.cookies.get('x-access-token');
     const refresh_token = req.headers['x-refresh-token'] || req.query.refresh_token || req.cookies.get('x-refresh-token');
 
-    const denied = await BlackToken.findOne({$or: [{token: access_token}, {token: refresh_token}]});
+    const denied = await BlackToken.findOne({$or: [{token: access_token}, {token: refresh_token}]}).lean().exec();
 
     if (denied) {
         return done(null, false);
     }
 
     /*try {
-        jwt.verify(access_token, process.env.KEYS, {
+        jwt.verify(access_token, process.env.SECRET, {
             jwtid: req.headers['x-finger-print']
         });
     } catch (e) {
