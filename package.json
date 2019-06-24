@@ -9,12 +9,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cookies": "^0.7.3",
     "jsonwebtoken": "^8.5.1",
     "koa-passport": "^4.1.3",
     "koa-router": "^7.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "users": "koalex/node-lesson-users",
-    "server": "koalex/node-lesson-server"
+    "server": "koalex/node-lesson-server",
+    "users": "koalex/node-lesson-users"
   }
 }
