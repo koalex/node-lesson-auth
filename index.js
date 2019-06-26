@@ -1,5 +1,5 @@
-const router = require('./router');
-const Socket = require('server/lib/socket');
+const router     = require('./router');
+const Socket     = require('../../lib/socket');
 const socketAuth = require('./middlewares/socketAuth');
 
 module.exports = function (app) {

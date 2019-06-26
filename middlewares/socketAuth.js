@@ -1,6 +1,6 @@
 const Cookies    = require('cookies');
 const jwt        = require('jsonwebtoken');
-const User       = require('users/models/user');
+const User       = require('../../users/models/user');
 const BlackToken = require('../models/blacktoken');
 
 module.exports = function (io) {
