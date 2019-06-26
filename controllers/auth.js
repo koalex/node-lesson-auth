@@ -90,6 +90,7 @@ exports.signout = async ctx => {
     ctx.cookies.set('x-refresh-token', null);
 
     Socket.io.to(ctx.state.user._id).emit('SIGNOUT');
+    Socket.io.emit('CLIENT_DISCONNECTED', ctx.state.user);
 
     ctx.redirect('/signin');
 };

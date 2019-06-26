@@ -25,6 +25,8 @@ module.exports = function (io) {
 
             socket.join(user._id);
 
+            socket.broadcast.emit('CLIENT_CONNECTED', user);
+
         } catch (e) {
             return next(new Error('Authentication error'));
         }
