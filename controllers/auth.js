@@ -48,9 +48,9 @@ exports.signin = async ctx => {
 
         // ctx.type = 'json';
         // ctx.body = tokens;
-
-        ctx.redirect('/');
     })(ctx);
+
+    ctx.redirect('/');
 };
 
 exports.signup = async ctx => {

@@ -7,7 +7,7 @@ const opts = {
     // issuer: 'http://jwtgenerate.com',
     // audience: 'https://drom.ru',
     passReqToCallback: true,
-    secretOrKey: process.env.KEYS,
+    secretOrKey: process.env.SECRET,
     ignoreExpiration: false,
     jwtFromRequest: req => {
         const token = req.headers['x-access-token'] || req.query.access_token || req.cookies.get('x-access-token');
