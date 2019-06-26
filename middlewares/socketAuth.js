@@ -23,11 +23,13 @@ module.exports = function (io) {
 
             socket.user = user;
 
+            socket.join(user._id);
+
         } catch (e) {
             return next(new Error('Authentication error'));
         }
 
-        next()
+        next();
     });
 };
 

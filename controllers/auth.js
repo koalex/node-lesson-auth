@@ -5,6 +5,7 @@ const BlackToken = require('../models/blacktoken');
 const genTokens  = require('./generateTokens');
 const uuidv1     = require('uuid/v1');
 const nodemailer = require('../../../lib/nodemailer');
+const Socket     = require('../../../lib/socket');
 
 exports.renderSigninPage = async ctx => {
     ctx.type = 'html';
@@ -87,6 +88,8 @@ exports.signout = async ctx => {
 
     ctx.cookies.set('x-access-token', null);
     ctx.cookies.set('x-refresh-token', null);
+
+    Socket.io.to(ctx.state.user._id).emit('SIGNOUT');
 
     ctx.redirect('/signin');
 };
