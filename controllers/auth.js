@@ -61,11 +61,11 @@ exports.signup = async ctx => {
 
     await new Promise((resove, reject) => {
         nodemailer.sendMail({
-            from: 'nodejs@mail.com',
-            to: 'nodemailerservice2019@gmail.com',
+            from: 'nodemailerservice2019@gmail.com',
+            to: ctx.request.body.email,
             subject: 'Проверка',
             // text: 'Привет мир',
-            html: `<a href="http://localhost:3000/api/v1/user-activation?activationToken=${user.activation_token}">ПОДТВЕРДИТЕ РЕГИСТРАЦИЮ</a>`
+            html: `<a href="http://188.225.26.54:3000/api/v1/user-activation?activationToken=${user.activation_token}">ПОДТВЕРДИТЕ РЕГИСТРАЦИЮ</a>`
         }, (err, info) => {
             if (err) return reject(err);
             resove(info);

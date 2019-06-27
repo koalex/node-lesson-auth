@@ -26,9 +26,7 @@ apiRouter.post('/signup', auth.signup);
 apiRouter.post('/signout', passport.authenticate('jwt', {session: false}), auth.signout);
 
 
-apiRouter.get('/user-activation', async ctx => {
-
-});
+apiRouter.get('/user-activation', auth.userActivationGet);
 
 
 router.get('/me', passport.authenticate('jwt', {session: false}), async ctx => {
